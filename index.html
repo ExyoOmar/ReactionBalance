@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>مكوّن المركبات الكيميائية</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo&display=swap');
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: #f9fafb;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+      color: #222;
+      direction: rtl;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #00695c;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      font-size: 1.2rem;
+      padding: 0.5rem;
+      margin-top: 0.3rem;
+      border: 2px solid #004d40;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 1rem;
+      width: 100%;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      font-size: 1.3rem;
+      padding: 0.7rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+    table {
+      margin-top: 1rem;
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.6rem;
+      text-align: center;
+    }
+    #compoundFormula {
+      font-size: 2rem;
+      margin-top: 1rem;
+      text-align: center;
+      color: #004d40;
+    }
+    #compoundInfo {
+      background: #e0f2f1;
+      padding: 1rem;
+      margin-top: 1rem;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+    .subscript {
+      vertical-align: sub;
+      font-size: 0.7em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>مكوّن المركبات الكيميائية</h1>
+
+  <form id="elementForm">
+    <label for="elementInput">العنصر الكيميائي (مثلاً: H, O, Na):</label>
+    <input type="text" id="elementInput" maxlength="2" required pattern="[A-Z][a-z]?" title="اكتب رمز العنصر مثل H أو Na" />
+
+    <label for="countInput">عدد الذرات:</label>
+    <input type="number" id="countInput" min="1" max="99" value="1" required />
+
+    <button type="submit">أضف العنصر</button>
+  </form>
+
+  <table id="elementsTable" hidden>
+    <thead>
+      <tr>
+        <th>العنصر</th>
+        <th>العدد</th>
+        <th>حذف</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div id="compoundFormula"></div>
+  <div id="compoundInfo"></div>
+
+  <script>
+    const elementForm = document.getElementById('elementForm');
+    const elementInput = document.getElementById('elementInput');
+    const countInput = document.getElementById('countInput');
+    const elementsTable = document.getElementById('elementsTable');
+    const elementsTbody = elementsTable.querySelector('tbody');
+    const compoundFormulaDiv = document.getElementById('compoundFormula');
+    const compoundInfoDiv = document.getElementById('compoundInfo');
+
+    // قاعدة البيانات ستُحمّل من ملف خارجي JSON
+    let compoundsDB = {};
+
+    fetch('compounds.json')
+      .then(response => response.json())
+      .then(data => {
+        compoundsDB = data;
+      })
+      .catch(err => {
+        console.error('فشل تحميل قاعدة البيانات:', err);
+      });
+
+    let elementsList = [];
+
+    function updateTable() {
+      if (elementsList.length === 0) {
+        elementsTable.hidden = true;
+        compoundFormulaDiv.textContent = '';
+        compoundInfoDiv.textContent = '';
+        return;
+      }
+      elementsTable.hidden = false;
+      elementsTbody.innerHTML = '';
+      elementsList.forEach((el, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${el.element}</td>
+          <td>${el.count}</td>
+          <td><button data-index="${index}" aria-label="حذف العنصر ${el.element}">❌</button></td>
+        `;
+        elementsTbody.appendChild(tr);
+      });
+      balanceCompound();
+    }
+
+    function balanceCompound() {
+      let formula = '';
+      elementsList.forEach(({element, count}) => {
+        formula += element;
+        if (count > 1) {
+          formula += `<span class="subscript">${count}</span>`;
+        }
+      });
+      compoundFormulaDiv.innerHTML = formula;
+
+      const formulaKey = elementsList.map(el => el.element + (el.count > 1 ? el.count : '')).join('');
+      const info = compoundsDB[formulaKey];
+      if (info) {
+        compoundInfoDiv.innerHTML = `
+          <strong>اسم المركب:</strong> ${info.name} <br />
+          <strong>نوع المركب:</strong> ${info.type} <br />
+          <strong>نقطة الانصهار:</strong> ${info.meltingPoint} <br />
+          <strong>نقطة الغليان:</strong> ${info.boilingPoint} <br />
+          <strong>الوزن الجزيئي:</strong> ${info.molecularWeight} جم/مول <br />
+          <p>${info.info}</p>
+        `;
+      } else {
+        compoundInfoDiv.textContent = 'المركب غير معروف في قاعدة البيانات.';
+      }
+    }
+
+    elementForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const element = elementInput.value.trim();
+      const count = parseInt(countInput.value);
+      if (!element.match(/^[A-Z][a-z]?$/)) {
+        alert('يرجى إدخال رمز عنصر صحيح (مثل H أو Na)');
+        return;
+      }
+      if (count < 1 || count > 99) {
+        alert('العدد يجب أن يكون بين 1 و 99');
+        return;
+      }
+
+      const existing = elementsList.find(el => el.element === element);
+      if (existing) {
+        existing.count += count;
+      } else {
+        elementsList.push({element, count});
+      }
+      updateTable();
+      elementInput.value = '';
+      countInput.value = 1;
+      elementInput.focus();
+    });
+
+    elementsTbody.addEventListener('click', e => {
+      if (e.target.tagName === 'BUTTON') {
+        const index = parseInt(e.target.dataset.index);
+        elementsList.splice(index, 1);
+        updateTable();
+      }
+    });
+  </script>
+
+</body>
+</html>
