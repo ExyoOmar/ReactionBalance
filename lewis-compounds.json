@@ -1,0 +1,34 @@
+{
+  "h2o": {
+    "name": "الماء (H₂O)",
+    "type": "مركب تساهمي",
+    "meltingPoint": "0 °C",
+    "boilingPoint": "100 °C",
+    "molecularWeight": "18.015 جم/مول",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Water-2D-Lewis-structure.svg/120px-Water-2D-Lewis-structure.svg.png"
+  },
+  "co2": {
+    "name": "ثاني أكسيد الكربون (CO₂)",
+    "type": "مركب تساهمي",
+    "meltingPoint": "-78.5 °C (ثاني أكسيد الكربون الصلب)",
+    "boilingPoint": "-56.6 °C",
+    "molecularWeight": "44.01 جم/مول",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Carbon-dioxide-2D.svg/120px-Carbon-dioxide-2D.svg.png"
+  },
+  "nh3": {
+    "name": "الأمونيا (NH₃)",
+    "type": "مركب تساهمي",
+    "meltingPoint": "-77.7 °C",
+    "boilingPoint": "-33.34 °C",
+    "molecularWeight": "17.031 جم/مول",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Ammonia-2D-Lewis-structure.svg/120px-Ammonia-2D-Lewis-structure.svg.png"
+  },
+  "nacl": {
+    "name": "كلوريد الصوديوم (NaCl)",
+    "type": "مركب أيوني",
+    "meltingPoint": "801 °C",
+    "boilingPoint": "1413 °C",
+    "molecularWeight": "58.44 جم/مول",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/NaCl_polyhedra.png/120px-NaCl_polyhedra.png"
+  }
+}

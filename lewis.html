@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بنية لويس - عنصر بعنصر</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0fdf4;
+    }
+  </style>
+</head>
+<body class="flex bg-gradient-to-br from-green-100 to-green-50 min-h-screen text-gray-800">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white shadow-lg p-6 hidden md:block">
+    <h2 class="text-2xl font-bold text-green-700 mb-4 text-center">📚 قائمة التنقل</h2>
+    <ul class="space-y-4 text-right">
+      <li>
+        <a href="index.html" class="block py-2 px-4 rounded-xl hover:bg-green-100 font-semibold text-green-800 transition">
+          🧪 الصفحة الرئيسية
+        </a>
+      </li>
+      <li>
+        <a href="lewis.html" class="block py-2 px-4 rounded-xl bg-green-200 font-bold text-green-900 shadow">
+          💠 بنية لويس
+        </a>
+      </li>
+    </ul>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-3xl shadow-xl">
+
+      <h1 class="text-3xl font-bold text-center text-green-700 mb-6">💠 بنية لويس</h1>
+
+      <p class="text-lg mb-4">
+        تُستخدم بنية لويس لتمثيل توزيع الإلكترونات في الجزيئات. يمكننا من خلالها فهم كيفية ترابط الذرات في المركبات التساهمية والأيونية.
+      </p>
+
+      <!-- Input Section -->
+      <div class="mb-8 text-center">
+        <input
+          id="compoundInput"
+          type="text"
+          placeholder="اكتب اسم المركب الكيميائي مثل H2O"
+          class="border border-green-300 rounded-xl px-4 py-2 w-2/3 max-w-md text-right"
+        />
+        <button
+          id="showLewisBtn"
+          class="mr-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-xl transition"
+        >
+          عرض بنية لويس
+        </button>
+      </div>
+
+      <!-- Result Section -->
+      <div id="result" class="text-right">
+        <!-- سيتم عرض صورة بنية لويس والخصائص هنا -->
+      </div>
+
+      <div class="mt-8 text-center">
+        <a href="index.html" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl transition">
+          🔙 العودة للصفحة الرئيسية
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+
+    const btn = document.getElementById("showLewisBtn");
+    const input = document.getElementById("compoundInput");
+    const resultDiv = document.getElementById("result");
+
+    btn.addEventListener("click", () => {
+      const compoundKey = input.value.trim().toLowerCase();
+      if (compoundKey in compounds) {
+        const c = compounds[compoundKey];
+        resultDiv.innerHTML = `
+          <h2 class="text-2xl font-bold mb-4 text-green-700">${c.name}</h2>
+          <img src="${c.image}" alt="Lewis structure of ${c.name}" class="mx-auto rounded-xl shadow-md mb-6 max-w-xs" />
+          <ul class="text-lg space-y-1">
+            <li><strong>نوع المركب:</strong> ${c.type}</li>
+            <li><strong>درجة الانصهار:</strong> ${c.meltingPoint}</li>
+            <li><strong>درجة الغليان:</strong> ${c.boilingPoint}</li>
+            <li><strong>الوزن الجزيئي:</strong> ${c.molecularWeight}</li>
+          </ul>
+        `;
+      } else {
+        resultDiv.innerHTML = `
+          <p class="text-red-600 font-bold">عذراً، لم يتم العثور على بيانات لهذا المركب.</p>
+        `;
+      }
+    });
+
+    // Enter key triggers button click
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") btn.click();
+    });
+  </script>
+</body>
+</html>
